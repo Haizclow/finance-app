@@ -17,7 +17,8 @@ public class Transaction {
     Long id;
 
     BigDecimal amount;
-    String category;
+    @ManyToOne
+    Category category;
     String description;
     LocalDate date;
 
