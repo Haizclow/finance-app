@@ -1,6 +1,7 @@
 package com.financetracker.finance_tracker.service;
 
 import com.financetracker.finance_tracker.entity.Transaction;
+import com.financetracker.finance_tracker.exception.ResourceNotFoundException;
 import com.financetracker.finance_tracker.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ public class TransactionService {
     }
 
     public Transaction getById(Long id){
-        return repository.findById(id).orElseThrow();
+        return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Transaction not found"));
     }
 
     public Transaction create(Transaction T){
@@ -25,7 +26,7 @@ public class TransactionService {
     }
 
     public Transaction update(Long id, Transaction t){
-        Transaction existing = repository.findById(id).orElseThrow();
+        Transaction existing = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Transaction not found"));
         existing.setAmount(t.getAmount());
         existing.setCategory(t.getCategory());
         existing.setDescription(t.getDescription());
@@ -35,6 +36,8 @@ public class TransactionService {
     }
 
     public void delete(Long id){
-        repository.deleteById(id);
+        Transaction existing = repository.findById(id)
+                        .orElseThrow(() -> new ResourceNotFoundException("Transaction not found"));
+        repository.delete(existing);
     }
 }
