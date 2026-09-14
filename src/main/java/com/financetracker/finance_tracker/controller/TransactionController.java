@@ -2,6 +2,7 @@ package com.financetracker.finance_tracker.controller;
 
 import com.financetracker.finance_tracker.entity.Transaction;
 import com.financetracker.finance_tracker.service.TransactionService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -26,12 +27,12 @@ public ResponseEntity<Transaction> getById(@PathVariable Long id) {
 }
 
 @PostMapping
-public ResponseEntity<Transaction> create(@RequestBody Transaction t) {
+public ResponseEntity<Transaction> create(@Valid @RequestBody Transaction t) {
     return ResponseEntity.status(201).body(service.create(t));
 }
 
 @PutMapping("/{id}")
-public ResponseEntity<Transaction> update(@RequestBody Transaction t, @PathVariable Long id) {
+public ResponseEntity<Transaction> update(@Valid @RequestBody Transaction t, @PathVariable Long id) {
     return ResponseEntity.ok(service.update(id, t));
 }
 
