@@ -1,6 +1,7 @@
 package com.financetracker.finance_tracker.service;
 
 import com.financetracker.finance_tracker.entity.Transaction;
+import com.financetracker.finance_tracker.entity.TransactionType;
 import com.financetracker.finance_tracker.exception.ResourceNotFoundException;
 import com.financetracker.finance_tracker.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +14,14 @@ import java.util.List;
 public class TransactionService {
     private final TransactionRepository repository;
 
-    public List<Transaction> getAll(){
-        return repository.findAll();
+    public List<Transaction> getAll(TransactionType type, Long categoryId) {
+        if (type != null) {
+            return repository.findByType(type);
+        } else if (categoryId != null) {
+            return repository.findByCategoryId(categoryId);
+        } else {
+            return repository.findAll();
+        }
     }
 
     public Transaction getById(Long id){

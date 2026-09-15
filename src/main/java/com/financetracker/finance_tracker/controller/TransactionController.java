@@ -1,6 +1,7 @@
 package com.financetracker.finance_tracker.controller;
 
 import com.financetracker.finance_tracker.entity.Transaction;
+import com.financetracker.finance_tracker.entity.TransactionType;
 import com.financetracker.finance_tracker.service.TransactionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +18,13 @@ public class TransactionController {
 private final TransactionService service;
 
 @GetMapping
-public ResponseEntity<List<Transaction>> getAll() {
-    return ResponseEntity.ok(service.getAll());
+public ResponseEntity<List<Transaction>> getAll
+        (
+         @RequestParam(required = false) TransactionType type,
+         @RequestParam(required = false) Long categoryId
+        )
+{
+    return ResponseEntity.ok(service.getAll(type, categoryId));
 }
 
 @GetMapping("/{id}")
