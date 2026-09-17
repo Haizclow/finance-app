@@ -1,5 +1,6 @@
 package com.financetracker.finance_tracker.controller;
 
+import com.financetracker.finance_tracker.dto.SummaryResponse;
 import com.financetracker.finance_tracker.entity.Transaction;
 import com.financetracker.finance_tracker.entity.TransactionType;
 import com.financetracker.finance_tracker.service.TransactionService;
@@ -43,9 +44,14 @@ public ResponseEntity<Transaction> update(@Valid @RequestBody Transaction t, @Pa
 }
 
 @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+public ResponseEntity<Void> delete(@PathVariable Long id) {
     service.delete(id);
     return ResponseEntity.noContent().build();
+}
+
+@GetMapping("/summary")
+public ResponseEntity<SummaryResponse> summary(){
+    return ResponseEntity.ok(service.financeSummary());
 }
 
 }

@@ -1,5 +1,6 @@
 package com.financetracker.finance_tracker.service;
 
+import com.financetracker.finance_tracker.dto.SummaryResponse;
 import com.financetracker.finance_tracker.entity.Transaction;
 import com.financetracker.finance_tracker.entity.TransactionType;
 import com.financetracker.finance_tracker.exception.ResourceNotFoundException;
@@ -7,6 +8,7 @@ import com.financetracker.finance_tracker.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -46,5 +48,19 @@ public class TransactionService {
         Transaction existing = repository.findById(id)
                         .orElseThrow(() -> new ResourceNotFoundException("Transaction not found"));
         repository.delete(existing);
+    }
+
+    public BigDecimal getSummary(TransactionType type){
+        BigDecimal raw = repository.sumAmountByType(type);
+        BigDecimal value = raw != null ? raw : BigDecimal.ZERO;
+        return value;
+    }
+
+    public SummaryResponse financeSummary(){
+        SummaryResponse response = new SummaryResponse();
+        response.setTotalIncome(getSummary(TransactionType.INCOME));
+        response.setTotalExpense(getSummary(TransactionType.EXPENSE));
+        response.setBalance(response.getTotalIncome().subtract(response.getTotalExpense()));
+        return response;
     }
 }
