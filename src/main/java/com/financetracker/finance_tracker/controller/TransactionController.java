@@ -1,12 +1,12 @@
 package com.financetracker.finance_tracker.controller;
 
 import com.financetracker.finance_tracker.dto.SummaryResponse;
+import com.financetracker.finance_tracker.dto.TransactionRequest;
 import com.financetracker.finance_tracker.entity.Transaction;
 import com.financetracker.finance_tracker.entity.TransactionType;
 import com.financetracker.finance_tracker.service.TransactionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,12 +34,12 @@ public ResponseEntity<Transaction> getById(@PathVariable Long id) {
 }
 
 @PostMapping
-public ResponseEntity<Transaction> create(@Valid @RequestBody Transaction t) {
+public ResponseEntity<Transaction> create(@Valid @RequestBody TransactionRequest t) {
     return ResponseEntity.status(201).body(service.create(t));
 }
 
 @PutMapping("/{id}")
-public ResponseEntity<Transaction> update(@Valid @RequestBody Transaction t, @PathVariable Long id) {
+public ResponseEntity<Transaction> update(@Valid @RequestBody TransactionRequest t, @PathVariable Long id) {
     return ResponseEntity.ok(service.update(id, t));
 }
 
