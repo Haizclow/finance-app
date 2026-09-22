@@ -2,7 +2,7 @@ package com.financetracker.finance_tracker.controller;
 
 import com.financetracker.finance_tracker.dto.SummaryResponse;
 import com.financetracker.finance_tracker.dto.TransactionRequest;
-import com.financetracker.finance_tracker.entity.Transaction;
+import com.financetracker.finance_tracker.dto.TransactionResponse;
 import com.financetracker.finance_tracker.entity.TransactionType;
 import com.financetracker.finance_tracker.service.TransactionService;
 import jakarta.validation.Valid;
@@ -19,7 +19,7 @@ public class TransactionController {
 private final TransactionService service;
 
 @GetMapping
-public ResponseEntity<List<Transaction>> getAll
+public ResponseEntity<List<TransactionResponse>> getAll
         (
          @RequestParam(required = false) TransactionType type,
          @RequestParam(required = false) Long categoryId
@@ -29,17 +29,17 @@ public ResponseEntity<List<Transaction>> getAll
 }
 
 @GetMapping("/{id}")
-public ResponseEntity<Transaction> getById(@PathVariable Long id) {
+public ResponseEntity<TransactionResponse> getById(@PathVariable Long id) {
     return ResponseEntity.ok(service.getById(id));
 }
 
 @PostMapping
-public ResponseEntity<Transaction> create(@Valid @RequestBody TransactionRequest t) {
+public ResponseEntity<TransactionResponse> create(@Valid @RequestBody TransactionRequest t) {
     return ResponseEntity.status(201).body(service.create(t));
 }
 
 @PutMapping("/{id}")
-public ResponseEntity<Transaction> update(@Valid @RequestBody TransactionRequest t, @PathVariable Long id) {
+public ResponseEntity<TransactionResponse> update(@Valid @RequestBody TransactionRequest t, @PathVariable Long id) {
     return ResponseEntity.ok(service.update(id, t));
 }
 
