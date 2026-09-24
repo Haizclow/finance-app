@@ -7,10 +7,11 @@ import com.financetracker.finance_tracker.entity.TransactionType;
 import com.financetracker.finance_tracker.service.TransactionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/transaction")
@@ -19,13 +20,14 @@ public class TransactionController {
 private final TransactionService service;
 
 @GetMapping
-public ResponseEntity<List<TransactionResponse>> getAll
+public ResponseEntity<Page<TransactionResponse>> getAll
         (
-         @RequestParam(required = false) TransactionType type,
-         @RequestParam(required = false) Long categoryId
+                Pageable pageable,
+                @RequestParam(required = false) TransactionType type,
+                @RequestParam(required = false) Long categoryId
         )
 {
-    return ResponseEntity.ok(service.getAll(type, categoryId));
+    return ResponseEntity.ok(service.getAll(pageable, type, categoryId));
 }
 
 @GetMapping("/{id}")

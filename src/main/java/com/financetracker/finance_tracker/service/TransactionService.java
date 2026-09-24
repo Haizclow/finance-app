@@ -8,13 +8,12 @@ import com.financetracker.finance_tracker.entity.TransactionType;
 import com.financetracker.finance_tracker.exception.ResourceNotFoundException;
 import com.financetracker.finance_tracker.repository.CategoryRepository;
 import com.financetracker.finance_tracker.repository.TransactionRepository;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -42,18 +41,18 @@ public class TransactionService {
 
 
 
-    public List<TransactionResponse> getAll(TransactionType type, Long categoryId) {
+    public Page<TransactionResponse> getAll
+            (
+            Pageable pageable,
+            TransactionType type,
+            Long categoryId
+            )
+    {
         if (type != null) {
-            return transactionRepository.findByType(type).stream()
-                    .map(this::toResponse)
-                    .collect(Collectors.toList());
+            return transactionRepository.findByType(type, pageable).map(this::toResponse);
         } else if (categoryId != null) {
-            return transactionRepository.findByCategoryId(categoryId).stream()
-                    .map(this::toResponse)
-                    .collect(Collectors.toList());
-        } else return transactionRepository.findAll().stream()
-                                                  .map(this::toResponse)
-                                                  .collect(Collectors.toList());
+            return transactionRepository.findByCategoryId(categoryId,pageable).map(this::toResponse);
+        } else return transactionRepository.findAll(pageable).map(this::toResponse);
     }
 
     public TransactionResponse getById(Long id){
