@@ -45,3 +45,7 @@ All endpoints now return TransactionResponse (flat categoryId/categoryName inste
 ### 2026-09-23 — Ticket 10: pagination and sorting (in progress)
 `wip: start pagination in TransactionRepository`
 Started working through Pageable/Page<T> in Spring Data JPA to paginate GET /api/transaction while keeping the existing type/categoryId filters. Not finished yet.
+
+### 2026-09-24 — Ticket 10: pagination and sorting (completed)
+`feat: add pagination and sorting with combined filters`
+Added Pageable/Page<T> support to GET /api/transaction — page/size/sort now work via Spring's built-in PageableHandlerMethodArgumentResolver (no manual @RequestParam needed for page/size/sort). Combined pagination with the existing type/categoryId filters using Page<T>.map() for the Transaction → TransactionResponse conversion. Merged feat into main.
