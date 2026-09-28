@@ -10,7 +10,6 @@ import org.springframework.data.repository.query.Param;
 
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
     Page<Transaction> findByType(TransactionType Type, Pageable pageable);
