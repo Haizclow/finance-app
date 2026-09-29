@@ -49,3 +49,7 @@ Started working through Pageable/Page<T> in Spring Data JPA to paginate GET /api
 ### 2026-09-24 — Ticket 10: pagination and sorting (completed)
 `feat: add pagination and sorting with combined filters`
 Added Pageable/Page<T> support to GET /api/transaction — page/size/sort now work via Spring's built-in PageableHandlerMethodArgumentResolver (no manual @RequestParam needed for page/size/sort). Combined pagination with the existing type/categoryId filters using Page<T>.map() for the Transaction → TransactionResponse conversion. Merged feat into main.
+
+### 2026-09-29 — Ticket 11: unit tests for TransactionService (completed)
+`test: add unit tests for TransactionService (getById, getSummary)`
+Added JUnit 5 + Mockito tests for TransactionService: @Mock for TransactionRepository/CategoryRepository, @InjectMocks for the service under test. Covered three scenarios: getById returns a correctly mapped TransactionResponse when the record exists, getById throws ResourceNotFoundException when it doesn't, and getSummary returns BigDecimal.ZERO instead of throwing NPE when sumAmountByType returns null (the same null-handling case from ticket 7, now guarded by a test).
