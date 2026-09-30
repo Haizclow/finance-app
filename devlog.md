@@ -53,3 +53,7 @@ Added Pageable/Page<T> support to GET /api/transaction — page/size/sort now wo
 ### 2026-09-29 — Ticket 11: unit tests for TransactionService (completed)
 `test: add unit tests for TransactionService (getById, getSummary)`
 Added JUnit 5 + Mockito tests for TransactionService: @Mock for TransactionRepository/CategoryRepository, @InjectMocks for the service under test. Covered three scenarios: getById returns a correctly mapped TransactionResponse when the record exists, getById throws ResourceNotFoundException when it doesn't, and getSummary returns BigDecimal.ZERO instead of throwing NPE when sumAmountByType returns null (the same null-handling case from ticket 7, now guarded by a test).
+
+### 2026-09-30 — Ticket 12: basic authentication (completed)
+`feat: add basic authentication via Spring Security`
+Added spring-boot-starter-security. Configured a SecurityConfig class with three beans: PasswordEncoder (BCryptPasswordEncoder), UserDetailsService (a single in-memory user with a BCrypt-hashed password instead of a plaintext one in application.yaml), and SecurityFilterChain (all /api/** paths require authentication via HTTP Basic, everything else is explicitly denied). Verified in Postman: valid credentials on /api/transaction return 200, missing credentials return 401, and an unmatched path returns 403 for a valid user vs 401 for invalid credentials — confirming denyAll() rejects even authenticated users, distinct from requiring authentication.
