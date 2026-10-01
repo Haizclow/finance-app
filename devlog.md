@@ -57,3 +57,6 @@ Added JUnit 5 + Mockito tests for TransactionService: @Mock for TransactionRepos
 ### 2026-09-30 — Ticket 12: basic authentication (completed)
 `feat: add basic authentication via Spring Security`
 Added spring-boot-starter-security. Configured a SecurityConfig class with three beans: PasswordEncoder (BCryptPasswordEncoder), UserDetailsService (a single in-memory user with a BCrypt-hashed password instead of a plaintext one in application.yaml), and SecurityFilterChain (all /api/** paths require authentication via HTTP Basic, everything else is explicitly denied). Verified in Postman: valid credentials on /api/transaction return 200, missing credentials return 401, and an unmatched path returns 403 for a valid user vs 401 for invalid credentials — confirming denyAll() rejects even authenticated users, distinct from requiring authentication.
+
+### 2026-10-01 — Ticket 12 follow-up: deeper review of Spring Security concepts
+No code changes. Went back through what beans are, how Dependency Injection works, Basic Auth mechanics (Base64 encoding over the Authorization header), the difference between authentication (401) and authorization (403), and what API means as a general concept. The ticket worked on the first pass, but the underlying mechanics needed a second, slower read to actually sink in.
