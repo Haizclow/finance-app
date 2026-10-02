@@ -60,3 +60,10 @@ Added spring-boot-starter-security. Configured a SecurityConfig class with three
 
 ### 2026-10-01 — Ticket 12 follow-up: deeper review of Spring Security concepts
 No code changes. Went back through what beans are, how Dependency Injection works, Basic Auth mechanics (Base64 encoding over the Authorization header), the difference between authentication (401) and authorization (403), and what API means as a general concept. The ticket worked on the first pass, but the underlying mechanics needed a second, slower read to actually sink in.
+
+### 2026-10-02 — Ticket 13: Docker Compose for the full app (completed)
+`feat: add Dockerfile and docker-compose for full app deployment`
+Added a multi-stage Dockerfile (Maven+JDK build stage, lightweight JRE runtime stage) so the app itself runs as a container instead of from the IDE. Wrote docker-compose.yml with two services, db (postgres) and app, where the app connects to the db by service name (db) rather than localhost inside the Docker network. Externalized the DB password and the Spring Security admin password into a .env file (gitignored) instead of hardcoding them in application.yaml/code. Verified with docker compose up --build: both containers start, Hibernate creates the schema against the fresh containerized Postgres, and Postman confirms Basic Auth and pagination work identically to the manual IDE run.
+
+### 2026-10-02 — Ticket 13 follow-up: .env tracking mishap
+No code changes to the app itself. An empty .env file got committed alongside the Dockerfile/docker-compose work, before the .gitignore rule for it was staged — "git add Dockerfile docker-compose.yml .gitignore" picked it up in the same pass. Since .env was empty at that point (no real secrets inside), the leak was harmless; stopped tracking it with git rm --cached, re-verified the fix, and kept the full commit history rather than rewriting it. Lesson: run git status before every commit, don't assume .gitignore protects a file that was staged in the same breath the rule was added.
