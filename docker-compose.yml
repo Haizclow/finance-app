@@ -8,6 +8,8 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
       - "5432:5432"
+    volumes:
+      - pgdbdata:/var/lib/postgresql/data
 
   app:
     build: .
@@ -22,3 +24,6 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
       SPRING_SECURITY_USER_NAME: admin
       SPRING_SECURITY_USER_PASSWORD: ${ADMIN_PASSWORD}
+
+volumes:
+  pgdbdata:
