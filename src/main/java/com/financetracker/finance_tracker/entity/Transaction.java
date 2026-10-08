@@ -17,23 +17,23 @@ import java.time.LocalDate;
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
     @NotNull
     @Positive
-    BigDecimal amount;
+    private BigDecimal amount;
 
     @NotNull
     @ManyToOne
-    Category category;
+    private Category category;
 
     @NotBlank
-    String description;
+    private String description;
 
     @NotNull
-    LocalDate date;
+    private LocalDate date;
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    TransactionType type;
+    private TransactionType type;
 }
