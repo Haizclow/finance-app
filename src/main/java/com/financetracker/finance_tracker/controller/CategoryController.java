@@ -1,8 +1,11 @@
 package com.financetracker.finance_tracker.controller;
 
-import com.financetracker.finance_tracker.entity.Category;
+import com.financetracker.finance_tracker.dto.CategoryRequest;
+import com.financetracker.finance_tracker.dto.CategoryResponse;
 import com.financetracker.finance_tracker.service.CategoryService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,12 +18,12 @@ public class CategoryController {
     private final CategoryService service;
 
     @GetMapping
-    public ResponseEntity<List<Category>> getAll() {
+    public ResponseEntity<List<CategoryResponse>> getAll() {
         return ResponseEntity.ok(service.getAll());
     }
 
     @PostMapping
-    public ResponseEntity<Category> create(@RequestBody Category C) {
-        return ResponseEntity.status(201).body(service.create(C));
+    public ResponseEntity<CategoryResponse> create(@Valid @RequestBody CategoryRequest categoryRequest) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(categoryRequest));
     }
 }
