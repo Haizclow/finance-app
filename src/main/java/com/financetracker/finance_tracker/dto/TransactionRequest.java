@@ -16,18 +16,18 @@ public class TransactionRequest {
 
     @NotNull
     @Positive
-    BigDecimal amount;
+    private BigDecimal amount;
 
     @NotNull
-    Long categoryId;
+    private Long categoryId;
 
     @NotBlank
-    String description;
+    private String description;
 
     @NotNull
-    LocalDate date;
+    private LocalDate date;
 
     @NotNull
-    TransactionType type;
+    private TransactionType type;
 }
 

@@ -10,10 +10,10 @@ import java.math.BigDecimal;
 public class SummaryResponse {
 
 
-    BigDecimal totalIncome;
+    private BigDecimal totalIncome;
 
-    BigDecimal totalExpense;
+    private BigDecimal totalExpense;
 
-    BigDecimal balance;
+    private BigDecimal balance;
 
 }

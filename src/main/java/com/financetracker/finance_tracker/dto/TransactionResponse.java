@@ -12,17 +12,17 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class TransactionResponse {
 
-    Long id;
+    private Long id;
 
-    BigDecimal amount;
+    private BigDecimal amount;
 
-    String categoryName;
+    private String categoryName;
 
-    Long categoryId;
+    private Long categoryId;
 
-    String description;
+    private String description;
 
-    LocalDate date;
+    private LocalDate date;
 
-    TransactionType type;
+    private TransactionType type;
 }
