@@ -1,16 +1,20 @@
 package com.financetracker.finance_tracker.service;
 
+import com.financetracker.finance_tracker.dto.CategoryRequest;
 import com.financetracker.finance_tracker.dto.CategoryResponse;
 import com.financetracker.finance_tracker.entity.Category;
 import com.financetracker.finance_tracker.repository.CategoryRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import static org.mockito.ArgumentMatchers.any;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,6 +47,46 @@ public class CategoryServiceTest {
         Assertions.assertEquals(2L, response.get(1).getId());
         Assertions.assertEquals("Такси", response.get(1).getName());
 
+        Assertions.assertEquals(2, response.size());
+    }
 
+    @Test
+    void getAll_shouldReturnBlankList_whenRepositoryIsEmpty () {
+
+
+
+        Mockito.when(categoryRepository.findAll()).thenReturn(List.of());
+
+        List<CategoryResponse> response = categoryService.getAll();
+
+        Assertions.assertEquals(new ArrayList<>(), response);
+
+    }
+
+    @Test
+    void create_shouldReturnCategory_whenItCreated () {
+        CategoryRequest request = new CategoryRequest();
+        request.setName("Еда");
+
+        Category savedCategory = new Category();
+        savedCategory.setId(1L);
+        savedCategory.setName("Еда");
+
+        ArgumentCaptor<Category> captor = ArgumentCaptor.forClass(Category.class);
+
+        Mockito.when(categoryRepository.save(any(Category.class))).thenReturn(savedCategory);
+
+        CategoryResponse created = categoryService.create(request);
+        //checks what is being returned after creating the Category
+        Assertions.assertEquals(1L, created.getId());
+        Assertions.assertEquals("Еда", created.getName());
+
+        //captures what went into save() and checks if save() was called only once
+        Mockito.verify(categoryRepository, Mockito.times(1)).save(captor.capture());
+
+        Category passed = captor.getValue();
+
+        Assertions.assertEquals("Еда", passed.getName());
+        Assertions.assertNull(passed.getId());
     }
 }
