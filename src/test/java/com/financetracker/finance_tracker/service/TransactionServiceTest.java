@@ -19,6 +19,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
+
 @ExtendWith(MockitoExtension.class)
 public class TransactionServiceTest {
 
@@ -72,4 +74,38 @@ public class TransactionServiceTest {
         Assertions.assertEquals(BigDecimal.ZERO, transactionService.getSummary(TransactionType.EXPENSE));
     }
 
+    @Test
+    void delete_shouldReturnNothingAndWorkOnlyOnes_whenSmtIsBeingDeleted () {
+        Transaction transaction = new Transaction();
+        Category category = new Category();
+
+        category.setId(1L);
+        category.setName("Еда");
+
+        transaction.setId(1L);
+        transaction.setAmount(BigDecimal.valueOf(100));
+        transaction.setCategory(category);
+        transaction.setDescription("smth");
+        transaction.setDate(LocalDate.now());
+        transaction.setType(TransactionType.EXPENSE);
+
+        Mockito.when(transactionRepository.findById(1L)).thenReturn(Optional.of(transaction));
+
+        transactionService.delete(1L);
+
+        Mockito.verify(transactionRepository, Mockito.times(1)).delete(transaction);
+
+
+    }
+
+    @Test
+    void delete_shouldThrowRNFE_whenTransactionNotFound () {
+
+        Mockito.when(transactionRepository.findById(1L)).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> {transactionService.delete(1L);});
+
+        Mockito.verify(transactionRepository, Mockito.never()).delete(any(Transaction.class));
+
+    }
 }
