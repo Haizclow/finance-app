@@ -97,3 +97,7 @@ Added JUnit + Mockito tests for CategoryService: getAll maps every category from
 ### 2026-10-15 — Ticket 17: delete tests for TransactionService (completed)
 `test: add delete tests for TransactionService`
 Added two unit tests for TransactionService.delete. Since the method is void, both rely on verify instead of assertions on a return value: when the transaction exists, the repository's delete() is called exactly once with the same entity returned by findById; when it doesn't, assertThrows wraps the service call and verify(never()) confirms nothing was deleted. Noticed that never() checks can pass vacuously: verifying delete() with a specific instance, or verifying the wrong method (e.g. deleteById when the service actually calls delete), would stay green even on broken code. Used any(Transaction.class) for the negative case and checked the service implementation to make sure the verified method is the one actually called.
+
+### 2026-10-16 — Ticket 18: Category CRUD (endpoints done)
+`feat: add category update/delete/getById endpoints`
+Completed the category API so it matches the transaction one: GET /api/category/{id}, PUT /api/category/{id} and DELETE /api/category/{id}, all going through CategoryRequest/CategoryResponse, with ResourceNotFoundException → 404 for a missing id, validation on PUT, and 204 on delete. Done solo after the chat session ended and verified in Postman. Still open from this ticket: deleting a category that transactions reference fails at the database level (foreign key), and that case isn't handled yet.
