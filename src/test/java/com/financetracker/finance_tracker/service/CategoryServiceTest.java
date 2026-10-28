@@ -3,7 +3,12 @@ package com.financetracker.finance_tracker.service;
 import com.financetracker.finance_tracker.dto.CategoryRequest;
 import com.financetracker.finance_tracker.dto.CategoryResponse;
 import com.financetracker.finance_tracker.entity.Category;
+import com.financetracker.finance_tracker.entity.Transaction;
+import com.financetracker.finance_tracker.entity.TransactionType;
+import com.financetracker.finance_tracker.exception.CategoryInUseException;
+import com.financetracker.finance_tracker.exception.ResourceNotFoundException;
 import com.financetracker.finance_tracker.repository.CategoryRepository;
+import com.financetracker.finance_tracker.repository.TransactionRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,14 +19,20 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.ArgumentMatchers.any;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 public class CategoryServiceTest {
 
     @InjectMocks
     private CategoryService categoryService;
+
+    @Mock
+    private TransactionRepository transactionRepository;
 
     @Mock
     private CategoryRepository categoryRepository;
@@ -88,5 +99,30 @@ public class CategoryServiceTest {
 
         Assertions.assertEquals("Еда", passed.getName());
         Assertions.assertNull(passed.getId());
+    }
+
+    @Test
+    void delete_shouldThrowCategoryInUse_whenCategoryHasTransactions () {
+        Transaction transaction = new Transaction();
+        Category category = new Category();
+
+        category.setId(1L);
+        category.setName("Еда");
+
+        transaction.setId(1L);
+        transaction.setAmount(BigDecimal.valueOf(100));
+        transaction.setCategory(category);
+        transaction.setDescription("smth");
+        transaction.setDate(LocalDate.now());
+        transaction.setType(TransactionType.EXPENSE);
+
+
+        Mockito.when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
+
+        Mockito.when(transactionRepository.existsByCategoryId(1L)).thenReturn(true);
+
+        Assertions.assertThrows(CategoryInUseException.class, () -> {categoryService.delete(1L);});
+
+        Mockito.verify(categoryRepository, Mockito.never()).delete(any(Category.class));
     }
 }

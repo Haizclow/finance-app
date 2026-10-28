@@ -3,8 +3,10 @@ package com.financetracker.finance_tracker.service;
 import com.financetracker.finance_tracker.dto.CategoryRequest;
 import com.financetracker.finance_tracker.dto.CategoryResponse;
 import com.financetracker.finance_tracker.entity.Category;
+import com.financetracker.finance_tracker.exception.CategoryInUseException;
 import com.financetracker.finance_tracker.exception.ResourceNotFoundException;
 import com.financetracker.finance_tracker.repository.CategoryRepository;
+import com.financetracker.finance_tracker.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +16,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
-    private final CategoryRepository repository;
+    private final CategoryRepository categoryRepository;
+    private final TransactionRepository transactionRepository;
 
     private CategoryResponse toResponse (Category category) {
         CategoryResponse categoryResponse = new CategoryResponse();
@@ -24,29 +27,31 @@ public class CategoryService {
     }
 
     public List<CategoryResponse> getAll(){
-        return repository.findAll().stream().map(this::toResponse).collect(Collectors.toList());
+        return categoryRepository.findAll().stream().map(this::toResponse).collect(Collectors.toList());
     }
 
     public CategoryResponse getById(Long id) {
-        return toResponse(repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category not found")));
+        return toResponse(categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category not found")));
     }
 
     public CategoryResponse update (Long id, CategoryRequest request) {
-        Category existingCategory = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+        Category existingCategory = categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category not found"));
         existingCategory.setName(request.getName());
-        return toResponse(repository.save(existingCategory));
+        return toResponse(categoryRepository.save(existingCategory));
     }
 
     public void delete (Long id){
-        Category existing = repository.findById(id)
+        Category existing = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
-        repository.delete(existing);
+        boolean isUsed = transactionRepository.existsByCategoryId(id);
+        if(isUsed) { throw new CategoryInUseException("This category is used in transactions"); }
+        categoryRepository.delete(existing);
     }
 
     public CategoryResponse create(CategoryRequest categoryRequest){
         Category category = new Category();
         category.setName(categoryRequest.getName());
 
-        return toResponse(repository.save(category));
+        return toResponse(categoryRepository.save(category));
     }
 }

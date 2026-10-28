@@ -18,4 +18,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     @Query("SELECT SUM(t.amount) FROM Transaction t WHERE t.type = :paramName")
     public BigDecimal sumAmountByType(@Param("paramName")TransactionType type);
+
+    boolean existsByCategoryId(Long categoryId);
 }

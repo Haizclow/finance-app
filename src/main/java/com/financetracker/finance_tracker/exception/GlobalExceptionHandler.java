@@ -15,6 +15,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(404).body(ex.getMessage());
     }
 
+    @ExceptionHandler(CategoryInUseException.class)
+    public ResponseEntity<String> handleInUse(CategoryInUseException ex) {
+        return ResponseEntity.status(409).body(ex.getMessage());
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<List<String>> handleValidation(MethodArgumentNotValidException ex) {
         List<String> errors = ex.getBindingResult()
