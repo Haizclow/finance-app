@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-
 import java.math.BigDecimal;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
@@ -17,7 +16,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     Page<Transaction> findByCategoryId(Long categoryId, Pageable pageable);
 
     @Query("SELECT SUM(t.amount) FROM Transaction t WHERE t.type = :paramName")
-    public BigDecimal sumAmountByType(@Param("paramName")TransactionType type);
+    public BigDecimal sumAmountByType(@Param("paramName") TransactionType type);
 
     boolean existsByCategoryId(Long categoryId);
 }

@@ -6,7 +6,6 @@ import com.financetracker.finance_tracker.entity.Category;
 import com.financetracker.finance_tracker.entity.Transaction;
 import com.financetracker.finance_tracker.entity.TransactionType;
 import com.financetracker.finance_tracker.exception.CategoryInUseException;
-import com.financetracker.finance_tracker.exception.ResourceNotFoundException;
 import com.financetracker.finance_tracker.repository.CategoryRepository;
 import com.financetracker.finance_tracker.repository.TransactionRepository;
 import org.junit.jupiter.api.Assertions;
@@ -17,13 +16,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import static org.mockito.ArgumentMatchers.any;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(MockitoExtension.class)
 public class CategoryServiceTest {
@@ -38,7 +38,7 @@ public class CategoryServiceTest {
     private CategoryRepository categoryRepository;
 
     @Test
-    void getAll_shouldReturnAllCategories_inRepository (){
+    void getAll_shouldReturnAllCategories_inRepository() {
         Category category = new Category();
         Category category2 = new Category();
 
@@ -62,8 +62,7 @@ public class CategoryServiceTest {
     }
 
     @Test
-    void getAll_shouldReturnBlankList_whenRepositoryIsEmpty () {
-
+    void getAll_shouldReturnBlankList_whenRepositoryIsEmpty() {
 
 
         Mockito.when(categoryRepository.findAll()).thenReturn(List.of());
@@ -75,7 +74,7 @@ public class CategoryServiceTest {
     }
 
     @Test
-    void create_shouldReturnCategory_whenItCreated () {
+    void create_shouldReturnCategory_whenItCreated() {
         CategoryRequest request = new CategoryRequest();
         request.setName("Еда");
 
@@ -102,7 +101,7 @@ public class CategoryServiceTest {
     }
 
     @Test
-    void delete_shouldThrowCategoryInUse_whenCategoryHasTransactions () {
+    void delete_shouldThrowCategoryInUse_whenCategoryHasTransactions() {
         Transaction transaction = new Transaction();
         Category category = new Category();
 
@@ -121,7 +120,9 @@ public class CategoryServiceTest {
 
         Mockito.when(transactionRepository.existsByCategoryId(1L)).thenReturn(true);
 
-        Assertions.assertThrows(CategoryInUseException.class, () -> {categoryService.delete(1L);});
+        Assertions.assertThrows(CategoryInUseException.class, () -> {
+            categoryService.delete(1L);
+        });
 
         Mockito.verify(categoryRepository, Mockito.never()).delete(any(Category.class));
     }

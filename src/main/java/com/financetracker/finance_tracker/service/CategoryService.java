@@ -19,14 +19,14 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final TransactionRepository transactionRepository;
 
-    private CategoryResponse toResponse (Category category) {
+    private CategoryResponse toResponse(Category category) {
         CategoryResponse categoryResponse = new CategoryResponse();
         categoryResponse.setId(category.getId());
         categoryResponse.setName(category.getName());
         return categoryResponse;
     }
 
-    public List<CategoryResponse> getAll(){
+    public List<CategoryResponse> getAll() {
         return categoryRepository.findAll().stream().map(this::toResponse).collect(Collectors.toList());
     }
 
@@ -34,21 +34,23 @@ public class CategoryService {
         return toResponse(categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category not found")));
     }
 
-    public CategoryResponse update (Long id, CategoryRequest request) {
+    public CategoryResponse update(Long id, CategoryRequest request) {
         Category existingCategory = categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category not found"));
         existingCategory.setName(request.getName());
         return toResponse(categoryRepository.save(existingCategory));
     }
 
-    public void delete (Long id){
+    public void delete(Long id) {
         Category existing = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
         boolean isUsed = transactionRepository.existsByCategoryId(id);
-        if(isUsed) { throw new CategoryInUseException("This category is used in transactions"); }
+        if (isUsed) {
+            throw new CategoryInUseException("This category is used in transactions");
+        }
         categoryRepository.delete(existing);
     }
 
-    public CategoryResponse create(CategoryRequest categoryRequest){
+    public CategoryResponse create(CategoryRequest categoryRequest) {
         Category category = new Category();
         category.setName(categoryRequest.getName());
 

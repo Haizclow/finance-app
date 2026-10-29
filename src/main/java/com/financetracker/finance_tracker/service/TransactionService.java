@@ -22,9 +22,7 @@ public class TransactionService {
     private final CategoryRepository categoryRepository;
 
 
-
-
-    private TransactionResponse toResponse (Transaction transaction){
+    private TransactionResponse toResponse(Transaction transaction) {
         TransactionResponse transactionResponse = new TransactionResponse();
         transactionResponse.setId(transaction.getId());
         transactionResponse.setAmount(transaction.getAmount());
@@ -38,28 +36,24 @@ public class TransactionService {
     }
 
 
-
-
-
     public Page<TransactionResponse> getAll
             (
-            Pageable pageable,
-            TransactionType type,
-            Long categoryId
-            )
-    {
+                    Pageable pageable,
+                    TransactionType type,
+                    Long categoryId
+            ) {
         if (type != null) {
             return transactionRepository.findByType(type, pageable).map(this::toResponse);
         } else if (categoryId != null) {
-            return transactionRepository.findByCategoryId(categoryId,pageable).map(this::toResponse);
+            return transactionRepository.findByCategoryId(categoryId, pageable).map(this::toResponse);
         } else return transactionRepository.findAll(pageable).map(this::toResponse);
     }
 
-    public TransactionResponse getById(Long id){
+    public TransactionResponse getById(Long id) {
         return toResponse(transactionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Transaction not found")));
     }
 
-    public TransactionResponse create(TransactionRequest transactionRequest){
+    public TransactionResponse create(TransactionRequest transactionRequest) {
         Transaction transaction = new Transaction();
 
         transaction.setCategory(categoryRepository.findById(transactionRequest.getCategoryId()).orElseThrow(() -> new ResourceNotFoundException("Category not found")));
@@ -71,7 +65,7 @@ public class TransactionService {
         return toResponse(transactionRepository.save(transaction));
     }
 
-    public TransactionResponse update(Long id, TransactionRequest transactionRequest){
+    public TransactionResponse update(Long id, TransactionRequest transactionRequest) {
         Transaction existingTransaction = transactionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Transaction not found"));
         existingTransaction.setAmount(transactionRequest.getAmount());
         existingTransaction.setCategory(categoryRepository.findById(transactionRequest.getCategoryId()).orElseThrow(() -> new ResourceNotFoundException("Category not found")));
@@ -81,19 +75,19 @@ public class TransactionService {
         return toResponse(transactionRepository.save(existingTransaction));
     }
 
-    public void delete(Long id){
+    public void delete(Long id) {
         Transaction existing = transactionRepository.findById(id)
-                        .orElseThrow(() -> new ResourceNotFoundException("Transaction not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Transaction not found"));
         transactionRepository.delete(existing);
     }
 
-    public BigDecimal getSummary(TransactionType type){
+    public BigDecimal getSummary(TransactionType type) {
         BigDecimal raw = transactionRepository.sumAmountByType(type);
         BigDecimal value = raw != null ? raw : BigDecimal.ZERO;
         return value;
     }
 
-    public SummaryResponse financeSummary(){
+    public SummaryResponse financeSummary() {
         SummaryResponse response = new SummaryResponse();
         response.setTotalIncome(getSummary(TransactionType.INCOME));
         response.setTotalExpense(getSummary(TransactionType.EXPENSE));

@@ -32,9 +32,8 @@ public class TransactionServiceTest {
     private TransactionRepository transactionRepository;
 
 
-
     @Test
-    void getById_shouldReturnTransaction_whenTrasactionExists(){
+    void getById_shouldReturnTransaction_whenTrasactionExists() {
         Transaction transaction = new Transaction();
         Category category = new Category();
 
@@ -59,15 +58,17 @@ public class TransactionServiceTest {
     }
 
     @Test
-    void getById_shoudThrowResourseNotFoundException_whenTransactionGetByIdIsNull(){
+    void getById_shoudThrowResourseNotFoundException_whenTransactionGetByIdIsNull() {
 
         Mockito.when(transactionRepository.findById(1L)).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(ResourceNotFoundException.class, () -> {transactionService.getById(1L);});
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+            transactionService.getById(1L);
+        });
     }
 
     @Test
-    void getSummary_shouldReturnZero_WhenSetAmountByTypeIsZero(){
+    void getSummary_shouldReturnZero_WhenSetAmountByTypeIsZero() {
 
         Mockito.when(transactionRepository.sumAmountByType(TransactionType.EXPENSE)).thenReturn(null);
 
@@ -75,7 +76,7 @@ public class TransactionServiceTest {
     }
 
     @Test
-    void delete_shouldReturnNothingAndWorkOnlyOnes_whenSmtIsBeingDeleted () {
+    void delete_shouldReturnNothingAndWorkOnlyOnes_whenSmtIsBeingDeleted() {
         Transaction transaction = new Transaction();
         Category category = new Category();
 
@@ -99,11 +100,13 @@ public class TransactionServiceTest {
     }
 
     @Test
-    void delete_shouldThrowRNFE_whenTransactionNotFound () {
+    void delete_shouldThrowRNFE_whenTransactionNotFound() {
 
         Mockito.when(transactionRepository.findById(1L)).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(ResourceNotFoundException.class, () -> {transactionService.delete(1L);});
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+            transactionService.delete(1L);
+        });
 
         Mockito.verify(transactionRepository, Mockito.never()).delete(any(Transaction.class));
 
