@@ -3,8 +3,6 @@ package com.financetracker.finance_tracker.service;
 import com.financetracker.finance_tracker.dto.CategoryRequest;
 import com.financetracker.finance_tracker.dto.CategoryResponse;
 import com.financetracker.finance_tracker.entity.Category;
-import com.financetracker.finance_tracker.entity.Transaction;
-import com.financetracker.finance_tracker.entity.TransactionType;
 import com.financetracker.finance_tracker.exception.CategoryInUseException;
 import com.financetracker.finance_tracker.repository.CategoryRepository;
 import com.financetracker.finance_tracker.repository.TransactionRepository;
@@ -17,8 +15,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -102,19 +98,10 @@ public class CategoryServiceTest {
 
     @Test
     void delete_shouldThrowCategoryInUse_whenCategoryHasTransactions() {
-        Transaction transaction = new Transaction();
         Category category = new Category();
 
         category.setId(1L);
         category.setName("Еда");
-
-        transaction.setId(1L);
-        transaction.setAmount(BigDecimal.valueOf(100));
-        transaction.setCategory(category);
-        transaction.setDescription("smth");
-        transaction.setDate(LocalDate.now());
-        transaction.setType(TransactionType.EXPENSE);
-
 
         Mockito.when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
 

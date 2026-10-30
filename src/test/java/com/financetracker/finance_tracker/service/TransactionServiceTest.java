@@ -33,7 +33,7 @@ public class TransactionServiceTest {
 
 
     @Test
-    void getById_shouldReturnTransaction_whenTrasactionExists() {
+    void getById_shouldReturnTransaction_whenTransactionExists() {
         Transaction transaction = new Transaction();
         Category category = new Category();
 
@@ -58,7 +58,7 @@ public class TransactionServiceTest {
     }
 
     @Test
-    void getById_shoudThrowResourseNotFoundException_whenTransactionGetByIdIsNull() {
+    void getById_shouldThrowResourceNotFoundException_whenTransactionGetByIdIsNull() {
 
         Mockito.when(transactionRepository.findById(1L)).thenReturn(Optional.empty());
 
@@ -68,7 +68,7 @@ public class TransactionServiceTest {
     }
 
     @Test
-    void getSummary_shouldReturnZero_WhenSetAmountByTypeIsZero() {
+    void getSummary_shouldReturnZero_WhenSetAmountByTypeIsNull() {
 
         Mockito.when(transactionRepository.sumAmountByType(TransactionType.EXPENSE)).thenReturn(null);
 
@@ -76,7 +76,7 @@ public class TransactionServiceTest {
     }
 
     @Test
-    void delete_shouldReturnNothingAndWorkOnlyOnes_whenSmtIsBeingDeleted() {
+    void delete_shouldDeleteTransaction_whenItExists() {
         Transaction transaction = new Transaction();
         Category category = new Category();
 
