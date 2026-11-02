@@ -15,6 +15,8 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     Page<Transaction> findByCategoryId(Long categoryId, Pageable pageable);
 
+    Page<Transaction> findByTypeAndCategoryId(TransactionType type, Long categoryId, Pageable pageable);
+
     @Query("SELECT SUM(t.amount) FROM Transaction t WHERE t.type = :paramName")
     public BigDecimal sumAmountByType(@Param("paramName") TransactionType type);
 

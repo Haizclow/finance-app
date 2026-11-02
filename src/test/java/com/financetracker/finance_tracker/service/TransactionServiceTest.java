@@ -14,6 +14,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -110,5 +113,20 @@ public class TransactionServiceTest {
 
         Mockito.verify(transactionRepository, Mockito.never()).delete(any(Transaction.class));
 
+    }
+
+    @Test
+    void getAll_shouldUseBothFilters_whenTypeAndCategoryGiven() {
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Mockito.when(transactionRepository.findByTypeAndCategoryId(TransactionType.EXPENSE, 1L, pageable))
+            .thenReturn(Page.empty());
+
+        transactionService.getAll(pageable, TransactionType.EXPENSE, 1L);
+
+        Mockito.verify(transactionRepository, Mockito.times(1)).findByTypeAndCategoryId(TransactionType.EXPENSE, 1L, pageable);
+        Mockito.verify(transactionRepository, Mockito.never()).findByType(any(), any());
+        Mockito.verify(transactionRepository, Mockito.never()).findByCategoryId(any(), any());
+        Mockito.verify(transactionRepository, Mockito.never()).findAll(any(Pageable.class));
     }
 }

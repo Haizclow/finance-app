@@ -42,7 +42,9 @@ public class TransactionService {
                     TransactionType type,
                     Long categoryId
             ) {
-        if (type != null) {
+        if ((type != null) && (categoryId != null)) {
+            return transactionRepository.findByTypeAndCategoryId(type, categoryId, pageable).map(this::toResponse);
+        } else if (type != null) {
             return transactionRepository.findByType(type, pageable).map(this::toResponse);
         } else if (categoryId != null) {
             return transactionRepository.findByCategoryId(categoryId, pageable).map(this::toResponse);
