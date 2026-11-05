@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,22 +26,21 @@ public class CategoryService {
     }
 
     public List<CategoryResponse> getAll() {
-        return categoryRepository.findAll().stream().map(this::toResponse).collect(Collectors.toList());
+        return categoryRepository.findAll().stream().map(this::toResponse).toList();
     }
 
     public CategoryResponse getById(Long id) {
-        return toResponse(categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category not found")));
+        return toResponse(findCategoryOrThrow(id));
     }
 
     public CategoryResponse update(Long id, CategoryRequest request) {
-        Category existingCategory = categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+        Category existingCategory = findCategoryOrThrow(id);
         existingCategory.setName(request.getName());
         return toResponse(categoryRepository.save(existingCategory));
     }
 
     public void delete(Long id) {
-        Category existing = categoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+        Category existing = findCategoryOrThrow(id);
         boolean isUsed = transactionRepository.existsByCategoryId(id);
         if (isUsed) {
             throw new CategoryInUseException("This category is used in transactions");
@@ -55,5 +53,9 @@ public class CategoryService {
         category.setName(categoryRequest.getName());
 
         return toResponse(categoryRepository.save(category));
+    }
+
+    private Category findCategoryOrThrow(Long id) {
+        return categoryRepository.findById(id).orElseThrow(() ->  new ResourceNotFoundException("Category not found"));
     }
 }

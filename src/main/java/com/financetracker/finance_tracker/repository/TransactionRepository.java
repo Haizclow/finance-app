@@ -11,14 +11,14 @@ import org.springframework.data.repository.query.Param;
 import java.math.BigDecimal;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
-    Page<Transaction> findByType(TransactionType Type, Pageable pageable);
+    Page<Transaction> findByType(TransactionType type, Pageable pageable);
 
     Page<Transaction> findByCategoryId(Long categoryId, Pageable pageable);
 
     Page<Transaction> findByTypeAndCategoryId(TransactionType type, Long categoryId, Pageable pageable);
 
     @Query("SELECT SUM(t.amount) FROM Transaction t WHERE t.type = :paramName")
-    public BigDecimal sumAmountByType(@Param("paramName") TransactionType type);
+    BigDecimal sumAmountByType(@Param("paramName") TransactionType type);
 
     boolean existsByCategoryId(Long categoryId);
 }

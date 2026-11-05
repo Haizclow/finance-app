@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,13 +36,13 @@ public class TransactionController {
     }
 
     @PostMapping
-    public ResponseEntity<TransactionResponse> create(@Valid @RequestBody TransactionRequest t) {
-        return ResponseEntity.status(201).body(service.create(t));
+    public ResponseEntity<TransactionResponse> create(@Valid @RequestBody TransactionRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(request));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TransactionResponse> update(@Valid @RequestBody TransactionRequest t, @PathVariable Long id) {
-        return ResponseEntity.ok(service.update(id, t));
+    public ResponseEntity<TransactionResponse> update(@Valid @RequestBody TransactionRequest request, @PathVariable Long id) {
+        return ResponseEntity.ok(service.update(id, request));
     }
 
     @DeleteMapping("/{id}")
