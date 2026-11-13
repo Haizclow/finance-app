@@ -11,9 +11,15 @@
 This repository contains the source code for the Finance Tracker application. The program is designed for expense monitoring and financial tracking.
 
 ## Technologies
-- **Containerization**: Docker / Docker Compose
-- **Tech Stack**: Java 21, Spring Boot
-- **Database**: PostgreSQL
+- **Language & Framework**: Java 21, Spring Boot 4 
+- **Build**: Maven (via Maven Wrapper ./mvnw)
+- **Database**: PostgreSQL 16 
+- **Data Access**: Spring Data JPA / Hibernate 
+- **Migrations**: Flyway (database schema is created from src/main/resources/db/migration)
+- **Security**: Spring Security, HTTP Basic Auth, BCrypt 
+- **Boilerplate reduction**: Lombok 
+- **Testing**: JUnit + Mockito (unit tests for services)
+- **Containerization**: Docker, Docker Compose
 
 ## Prerequisites
 Before you begin, make sure you have the following installed on your system:
@@ -46,7 +52,7 @@ finance-app/
 ├── target/
 ├── .env.example          # Environment variables template
 ├── .gitattributes
-├── .gitignore            # Git ignores 
+├── .gitignore            # Files excluded from version control 
 ├── devlog.md
 ├── docker-compose.yml    # Services configuration
 ├── Dockerfile            # Container build script
