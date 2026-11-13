@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,9 +39,9 @@ public class CategoryServiceTest {
         Category category = new Category();
         Category category2 = new Category();
 
-        category.setId(1L);
+        ReflectionTestUtils.setField(category, "id", 1L);
         category.setName("Еда");
-        category2.setId(2L);
+        ReflectionTestUtils.setField(category2, "id", 2L);
         category2.setName("Такси");
 
 
@@ -75,7 +76,7 @@ public class CategoryServiceTest {
         request.setName("Еда");
 
         Category savedCategory = new Category();
-        savedCategory.setId(1L);
+        ReflectionTestUtils.setField(savedCategory, "id", 1L);
         savedCategory.setName("Еда");
 
         ArgumentCaptor<Category> captor = ArgumentCaptor.forClass(Category.class);
@@ -100,7 +101,7 @@ public class CategoryServiceTest {
     void delete_shouldThrowCategoryInUse_whenCategoryHasTransactions() {
         Category category = new Category();
 
-        category.setId(1L);
+        ReflectionTestUtils.setField(category, "id", 1L);
         category.setName("Еда");
 
         Mockito.when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
