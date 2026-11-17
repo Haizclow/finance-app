@@ -4,6 +4,7 @@ import com.financetracker.finance_tracker.dto.CategoryRequest;
 import com.financetracker.finance_tracker.dto.CategoryResponse;
 import com.financetracker.finance_tracker.entity.Category;
 import com.financetracker.finance_tracker.exception.CategoryInUseException;
+import com.financetracker.finance_tracker.exception.ResourceNotFoundException;
 import com.financetracker.finance_tracker.repository.CategoryRepository;
 import com.financetracker.finance_tracker.repository.TransactionRepository;
 import org.junit.jupiter.api.Assertions;
@@ -113,4 +114,42 @@ public class CategoryServiceTest {
 
         Mockito.verify(categoryRepository, Mockito.never()).delete(any(Category.class));
     }
+
+    @Test
+    void update_shouldUpdateAndSave_whenCategoryExists() {
+        Category existingCategory = new Category();
+        CategoryRequest request = new CategoryRequest();
+
+        existingCategory.setId(1L);
+        existingCategory.setName("Еда");
+
+        request.setName("Такси");
+
+        Mockito.when(categoryRepository.findById(1L)).thenReturn(Optional.of(existingCategory));
+
+        Mockito.when(categoryRepository.save(any(Category.class))).thenReturn(existingCategory);
+
+        CategoryResponse response = categoryService.update(1L, request);
+
+        Assertions.assertEquals(1L, response.getId());
+        Assertions.assertEquals("Такси", response.getName());
+        Mockito.verify(categoryRepository, Mockito.times(1)).save(any(Category.class));
+    }
+
+    @Test
+    void update_shouldThrowException_whenCategoryNotExist() {
+        CategoryRequest request = new CategoryRequest();
+
+        request.setName("Такси");
+
+        Mockito.when(categoryRepository.findById(2L)).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+            categoryService.update(2L, request);
+        });
+
+        Mockito.verify(categoryRepository, Mockito.never()).save(any(Category.class));
+    }
+
+
 }
