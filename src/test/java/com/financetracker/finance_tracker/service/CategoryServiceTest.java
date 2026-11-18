@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -117,30 +118,35 @@ public class CategoryServiceTest {
 
     @Test
     void update_shouldUpdateAndSave_whenCategoryExists() {
+        ArgumentCaptor<Category> categoryCaptor = ArgumentCaptor.forClass(Category.class);
         Category existingCategory = new Category();
         CategoryRequest request = new CategoryRequest();
 
-        existingCategory.setId(1L);
-        existingCategory.setName("Еда");
+        ReflectionTestUtils.setField(existingCategory, "id", 1L);
+        ReflectionTestUtils.setField(existingCategory, "name", "Еда");
 
-        request.setName("Такси");
+        ReflectionTestUtils.setField(request, "name", "Такси");
 
         Mockito.when(categoryRepository.findById(1L)).thenReturn(Optional.of(existingCategory));
-
         Mockito.when(categoryRepository.save(any(Category.class))).thenReturn(existingCategory);
 
         CategoryResponse response = categoryService.update(1L, request);
 
         Assertions.assertEquals(1L, response.getId());
         Assertions.assertEquals("Такси", response.getName());
-        Mockito.verify(categoryRepository, Mockito.times(1)).save(any(Category.class));
+
+        Mockito.verify(categoryRepository).save(categoryCaptor.capture());
+        Category capturedCategory = categoryCaptor.getValue();
+
+        Assertions.assertEquals(1L, capturedCategory.getId());
+        Assertions.assertEquals("Такси", capturedCategory.getName());
     }
 
     @Test
     void update_shouldThrowException_whenCategoryNotExist() {
         CategoryRequest request = new CategoryRequest();
 
-        request.setName("Такси");
+        ReflectionTestUtils.setField(request, "name", "Такси");
 
         Mockito.when(categoryRepository.findById(2L)).thenReturn(Optional.empty());
 
