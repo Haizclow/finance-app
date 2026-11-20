@@ -51,7 +51,7 @@ public class CategoryServiceTest {
         List<CategoryResponse> response = categoryService.getAll();
 
         Assertions.assertEquals(1L, response.get(0).getId());
-        Assertions.assertEquals("Еда", response.get(0).getName());
+        Assertions.assertEquals("Food", response.get(0).getName());
 
         Assertions.assertEquals(2L, response.get(1).getId());
         Assertions.assertEquals("Такси", response.get(1).getName());
