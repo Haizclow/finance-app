@@ -15,16 +15,17 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static com.financetracker.finance_tracker.entity.TransactionType.EXPENSE;
-import static com.financetracker.finance_tracker.entity.TransactionType.INCOME;
 import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(MockitoExtension.class)
@@ -131,6 +132,83 @@ public class TransactionServiceTest {
         Mockito.verify(transactionRepository, Mockito.never()).findByType(any(), any());
         Mockito.verify(transactionRepository, Mockito.never()).findByCategoryId(any(), any());
         Mockito.verify(transactionRepository, Mockito.never()).findAll(any(Pageable.class));
+    }
+
+    @Test
+    void getAll_shouldUseOnlyTypeFilter_whenOnlyTypeIsGiven() {
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Mockito.when(transactionRepository.findByType(EXPENSE, pageable)).thenReturn(Page.empty());
+
+        transactionService.getAll(pageable, EXPENSE, null);
+
+        Mockito.verify(transactionRepository, Mockito.times(1)).findByType(EXPENSE, pageable);
+        Mockito.verify(transactionRepository, Mockito.never()).findByTypeAndCategoryId(any(), any(), any());
+        Mockito.verify(transactionRepository, Mockito.never()).findByCategoryId(any(), any());
+        Mockito.verify(transactionRepository, Mockito.never()).findAll(any(Pageable.class));
+
+    }
+
+    @Test
+    void getAll_shouldUseOnlyCategoryIdFilter_whenOnlyCategoryIdIsGiven() {
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Mockito.when(transactionRepository.findByCategoryId(1L, pageable)).thenReturn(Page.empty());
+
+        transactionService.getAll(pageable, null, 1L);
+
+        Mockito.verify(transactionRepository, Mockito.times(1)).findByCategoryId(1L, pageable);
+        Mockito.verify(transactionRepository, Mockito.never()).findByTypeAndCategoryId(any(), any(), any());
+        Mockito.verify(transactionRepository, Mockito.never()).findByType(any(), any());
+        Mockito.verify(transactionRepository, Mockito.never()).findAll(any(Pageable.class));
+
+    }
+
+
+    @Test
+    void getAll_shouldReturnEverything_whenNoFiltersAreUsed() {
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Mockito.when(transactionRepository.findAll(pageable)).thenReturn(Page.empty());
+
+        transactionService.getAll(pageable, null, null);
+
+        Mockito.verify(transactionRepository, Mockito.times(1)).findAll(pageable);
+        Mockito.verify(transactionRepository, Mockito.never()).findByTypeAndCategoryId(any(), any(), any());
+        Mockito.verify(transactionRepository, Mockito.never()).findByType(any(), any());
+        Mockito.verify(transactionRepository, Mockito.never()).findByCategoryId(any(), any());
+    }
+
+    @Test
+    void getAll_shouldReturnCorrectDataOfThePage_whenItsCalled () {
+        Pageable pageable = PageRequest.of(0,1);
+        Transaction transaction = new Transaction();
+        Category category = new Category();
+
+        ReflectionTestUtils.setField(category, "id", 1L);
+        category.setName("Еда");
+
+        ReflectionTestUtils.setField(transaction, "id", 1L);
+        transaction.setAmount(BigDecimal.valueOf(100));
+        transaction.setCategory(category);
+        transaction.setDescription("smth");
+        transaction.setDate(LocalDate.of(2026, 11, 26));
+        transaction.setType(EXPENSE);
+
+        Mockito.when(transactionRepository.findAll(pageable)).thenReturn(new PageImpl<>(List.of(transaction), pageable,1));
+
+        Page<TransactionResponse> result = transactionService.getAll(pageable, null,null);
+
+        TransactionResponse actual = result.getContent().get(0);
+        Assertions.assertEquals( 1L, actual.getId());
+        Assertions.assertEquals( BigDecimal.valueOf(100), actual.getAmount());
+        Assertions.assertEquals("Еда", actual.getCategoryName());
+        Assertions.assertEquals("smth", actual.getDescription());
+        Assertions.assertEquals(LocalDate.of(2026, 11, 26), actual.getDate());
+        Assertions.assertEquals(EXPENSE, actual.getType());
+        Assertions.assertEquals(0, result.getNumber());
+        Assertions.assertEquals(1, result.getSize());
+        Assertions.assertEquals(1, result.getTotalElements());
     }
 
     @Test
